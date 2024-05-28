@@ -15,7 +15,7 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Ensure you have the correct path to your model
-MODEL_PATH = 'models/model_CNN_final_epoch40.h5'
+MODEL_PATH = 'api/models/model_CNN_final_epoch40.h5'
 
 # Load your trained model
 new_model = load_model(MODEL_PATH)
@@ -59,7 +59,7 @@ def upload():
         return jsonify({'error': 'No file selected for uploading.'}), 400
 
     basepath = os.path.dirname(__file__)
-    file_path = os.path.join(basepath, 'uploads', secure_filename(f.filename))
+    file_path = os.path.join(basepath, 'api/uploads', secure_filename(f.filename))
     f.save(file_path)
 
     try:
