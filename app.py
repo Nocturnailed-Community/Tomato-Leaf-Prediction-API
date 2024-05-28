@@ -1,5 +1,6 @@
 # Import the necessary libraries
 import os
+import base64
 import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
