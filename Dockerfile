@@ -16,5 +16,5 @@ COPY . .
 # Ekspose port yang akan digunakan oleh aplikasi Flask
 EXPOSE 5000
 
-# Tentukan perintah untuk menjalankan aplikasi Flask
-CMD ["python", "app.py"]
+# Tentukan perintah untuk menjalankan aplikasi Flask dengan Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
