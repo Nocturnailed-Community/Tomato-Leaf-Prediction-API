@@ -8,7 +8,7 @@ git clone https://github.com/Nocturnailed-Community/Tomato-Leaf-Prediction-API.g
 
 ```
 Flask
-flask-cors
+flask_cors
 Werkzeug
 tensorflow
 numpy
