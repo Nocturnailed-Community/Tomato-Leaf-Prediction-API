@@ -1,0 +1,6 @@
+Instruksi menjalankan model di docker
+docker build -t tomato-leaf-prediction .
+docker run -d -p 5000:5000 tomato-leaf-prediction
+
+Instruksi melihat container yang berjalan
+docker ps
