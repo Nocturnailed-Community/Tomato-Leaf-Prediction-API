@@ -63,7 +63,12 @@ def upload():
         os.remove(file_path)
 
         if np.all(np.array(prediction) < 80):
-            return jsonify({'PredictionLabel': 'Daun penyakit tidak ditemukan', 'PredictionClass': prediction})
+            return jsonify({
+                'PredictionLabel': 'Daun penyakit tidak ditemukan', 
+                'PredictionClass': prediction,
+                'ExtensionImage': "null",
+                'ClassImage': "null"
+            })
         else:
             class_image_base64 = get_image_base64(class_images[predict])
             return jsonify({
