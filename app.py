@@ -66,8 +66,8 @@ def upload():
             return jsonify({
                 'PredictionLabel': 'Daun penyakit tidak ditemukan', 
                 'PredictionClass': prediction,
-                'ExtensionImage': "null",
-                'ClassImage': "null"
+                'ExtensionImage': 'null',
+                'ClassImage': 'null'
             })
         else:
             class_image_base64 = get_image_base64(class_images[predict])
