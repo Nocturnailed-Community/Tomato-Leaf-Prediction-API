@@ -7,12 +7,13 @@ git clone https://github.com/Nocturnailed-Community/Tomato-Leaf-Prediction-API.g
 ## Install Library dependencies
 
 ```
-Flask
+flask
 flask_cors
-Werkzeug
-tensorflow
-numpy
 gunicorn
+Werkzeug
+numpy
+tensorflow
+pillow
 ```
 
 ```
@@ -20,3 +21,12 @@ pip install -r requirements.txt
 ```
 
 ## Deployment
+
+```
+Instructions for running the model in docker
+docker build -t tomato-leaf-prediction .
+docker run -d -p 5000:5000 tomato-leaf-prediction
+
+The instruction looks at running containers
+docker ps
+```
