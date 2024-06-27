@@ -4,3 +4,8 @@ docker run -d -p 5000:5000 tomato-leaf-prediction
 
 Instruksi melihat container yang berjalan
 docker ps
+
+Instruksi push ke docker hub image
+docker build . -t your_username_docker/tomato-leaf-prediction
+docker login
+docker push your_username_docker/tomato-leaf-prediction
