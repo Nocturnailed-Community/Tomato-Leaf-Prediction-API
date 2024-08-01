@@ -10,15 +10,16 @@ from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-MODEL_PATH = 'models/model_CNN_final_epoch40.h5'
+MODEL_PATH = 'models/model_CNN_final_new_dataset_epoch40.h5'
 new_model = load_model(MODEL_PATH, compile=False)
 
-dic = {0: 'bercak kering', 1: 'daun sehat', 2: 'embun tepung', 3: 'tenggorok daun'}
+dic = {0: 'bercak kering', 1: 'daun sehat', 2: 'embun tepung', 3: 'tenggorok daun', 4: 'busuk daun'}
 class_images = {
     'bercak kering': 'class/bercak_kering/bercak_kering1.jpg',
     'daun sehat': 'class/daun_sehat/daun_sehat1.jpg',
     'embun tepung': 'class/embun_tepung/embun_tepung1.jpg',
-    'tenggorok daun': 'class/tenggorok_daun/tenggorok_daun1.jpg'
+    'tenggorok daun': 'class/tenggorok_daun/tenggorok_daun1.jpg',
+    'busuk daun': 'class/busuk_daun/busuk_daun1.jpg'
 }
 
 def get_image_base64(image_path):
@@ -54,7 +55,9 @@ def upload():
         return jsonify({'error': 'No file selected for uploading.'}), 400
 
     basepath = os.path.dirname(__file__)
-    file_path = os.path.join(basepath, 'uploads', secure_filename(f.filename))
+    filename = secure_filename(f.filename)
+    filename_lower = filename.lower()
+    file_path = os.path.join(basepath, 'uploads', secure_filename(filename_lower))
     f.save(file_path)
 
     try:
