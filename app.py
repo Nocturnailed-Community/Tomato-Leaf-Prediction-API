@@ -10,16 +10,16 @@ from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-MODEL_PATH = 'models/model_CNN_final_new_dataset_epoch40.h5'
+MODEL_PATH = 'models/model_CNN_final_new_dataset_mobileNetV2_epoch50.h5'
 new_model = load_model(MODEL_PATH, compile=False)
 
-dic = {0: 'bercak kering', 1: 'daun sehat', 2: 'embun tepung', 3: 'tenggorok daun', 4: 'busuk daun'}
+dic = {0: 'bercak kering', 1: 'busuk daun', 2: 'daun sehat', 3: 'embun tepung', 4: 'pengorok daun'}
 class_images = {
     'bercak kering': 'class/bercak_kering/bercak_kering1.jpg',
+    'busuk daun': 'class/busuk_daun/busuk_daun1.jpg',
     'daun sehat': 'class/daun_sehat/daun_sehat1.jpg',
     'embun tepung': 'class/embun_tepung/embun_tepung1.jpg',
-    'tenggorok daun': 'class/tenggorok_daun/tenggorok_daun1.jpg',
-    'busuk daun': 'class/busuk_daun/busuk_daun1.jpg'
+    'pengorok daun': 'class/tenggorok_daun/tenggorok_daun1.jpg',
 }
 
 def get_image_base64(image_path):
@@ -65,7 +65,7 @@ def upload():
         prediction = predict_class(file_path)
         os.remove(file_path)
 
-        if np.all(np.array(prediction) < 80):
+        if np.all(np.array(prediction) < 85):
             return jsonify({
                 'PredictionLabel': 'Daun penyakit tidak ditemukan', 
                 'PredictionClass': prediction,
