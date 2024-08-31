@@ -10,10 +10,26 @@ from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-MODEL_PATH = 'models/model_CNN_final_new_dataset_mobileNetV2_epoch50.h5'
-new_model = load_model(MODEL_PATH, compile=False)
+# Path to the model
+MODEL_PATH = 'models/model_CNN_final_new_dataset_nasNetMobile_epoch50.h5'
 
-dic = {0: 'bercak kering', 1: 'busuk daun', 2: 'daun sehat', 3: 'embun tepung', 4: 'pengorok daun'}
+# Attempt to load the model, catch any errors
+try:
+    new_model = load_model(MODEL_PATH, compile=False)
+except Exception as e:
+    print(f"Error loading the model: {e}")
+    new_model = None
+
+# Dictionary for class labels
+dic = {
+    0: 'bercak kering',
+    1: 'busuk daun',
+    2: 'daun sehat',
+    3: 'embun tepung',
+    4: 'pengorok daun'
+}
+
+# Class images
 class_images = {
     'bercak kering': 'class/bercak_kering/bercak_kering1.jpg',
     'busuk daun': 'class/busuk_daun/busuk_daun1.jpg',
@@ -23,30 +39,47 @@ class_images = {
 }
 
 def get_image_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode('utf-8')
+    """ Convert an image to base64. """
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode('utf-8')
+    except Exception as e:
+        print(f"Error converting image to base64: {e}")
+        return None
 
 def predict_label(img_path):
-    img = image.load_img(img_path, target_size=(224,224))
-    img_array = image.img_to_array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-    prediction = new_model.predict(img_array)
-    predicted_class = np.argmax(prediction, axis=1)
-    return dic[predicted_class[0]]
+    """ Predict the label of the image. """
+    try:
+        img = image.load_img(img_path, target_size=(224, 224))
+        img_array = image.img_to_array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        prediction = new_model.predict(img_array)
+        predicted_class = np.argmax(prediction, axis=1)
+        return dic[predicted_class[0]]
+    except Exception as e:
+        print(f"Prediction error: {e}")
+        return None
 
 def predict_class(img_path):
-    img = image.load_img(img_path, target_size=(224,224))
-    img_array = image.img_to_array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-    prediction = new_model.predict(img_array)
-    return np.round(prediction[0] * 100).tolist()
+    """ Predict the class probabilities of the image. """
+    try:
+        img = image.load_img(img_path, target_size=(224, 224))
+        img_array = image.img_to_array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        prediction = new_model.predict(img_array)
+        return np.round(prediction[0] * 100).tolist()
+    except Exception as e:
+        print(f"Error during class prediction: {e}")
+        return None
 
 @app.route('/', methods=['GET'])
 def index():
+    """ Test route for API. """
     return jsonify({'message': 'Tomato Leaf Prediction!'})
 
 @app.route('/api/predict', methods=['POST'])
 def upload():
+    """ Handle file upload and make predictions. """
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded.'}), 400
 
@@ -54,17 +87,23 @@ def upload():
     if f.filename == '':
         return jsonify({'error': 'No file selected for uploading.'}), 400
 
+    # Save the uploaded file
     basepath = os.path.dirname(__file__)
     filename = secure_filename(f.filename)
-    filename_lower = filename.lower()
-    file_path = os.path.join(basepath, 'uploads', secure_filename(filename_lower))
-    f.save(file_path)
+    file_path = os.path.join(basepath, 'uploads', filename.lower())
+    try:
+        f.save(file_path)
+    except Exception as e:
+        return jsonify({'error': f"File saving failed: {e}"}), 500
 
     try:
         predict = predict_label(file_path)
         prediction = predict_class(file_path)
+
+        # Delete the uploaded file after prediction
         os.remove(file_path)
 
+        # Handle prediction results
         if np.all(np.array(prediction) < 85):
             return jsonify({
                 'PredictionLabel': 'Daun penyakit tidak ditemukan', 
@@ -74,6 +113,9 @@ def upload():
             })
         else:
             class_image_base64 = get_image_base64(class_images[predict])
+            if class_image_base64 is None:
+                raise Exception("Class image not found or could not be encoded.")
+                
             return jsonify({
                 'PredictionLabel': predict,
                 'PredictionClass': prediction,
