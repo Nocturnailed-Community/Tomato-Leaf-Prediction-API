@@ -99,6 +99,10 @@ def upload():
     try:
         predict = predict_label(file_path)
         prediction = predict_class(file_path)
+        
+        # Check if prediction is None before proceeding
+        if prediction is None:
+            raise Exception("Prediction failed or returned no result.")
 
         # Delete the uploaded file after prediction
         os.remove(file_path)
