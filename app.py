@@ -11,7 +11,7 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Path to the model
-MODEL_PATH = 'models/model_CNN_final_new_dataset_nasNetMobile_epoch50.h5'
+MODEL_PATH = 'models/model_CNN_final_new_dataset_MobileNetV2_epoch50.h5'
 
 # Attempt to load the model, catch any errors
 try:
