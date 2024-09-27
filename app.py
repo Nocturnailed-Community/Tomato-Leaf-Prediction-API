@@ -11,7 +11,7 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Path to the model
-MODEL_PATH = 'models/model_CNN_final_new_dataset_nasNetMobile_epoch50.h5'
+MODEL_PATH = 'models/model_CNN_final_new_dataset_mobileNetV2_epoch50.h5'
 
 # Attempt to load the model, catch any errors
 try:
@@ -118,8 +118,8 @@ def upload():
         prediction = predict_class(file_path)
         
         # Check if prediction is None before proceeding
-        if prediction is None:
-            raise Exception("Prediction failed or returned no result.")
+        # if prediction is None:
+        #     raise Exception("Prediction failed or returned no result.")
 
         # Delete the uploaded file after prediction
         os.remove(file_path)
